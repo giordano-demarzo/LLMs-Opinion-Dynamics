@@ -8,12 +8,12 @@ import string
 
 #Anthropic key
 client = anthropic.Anthropic(
-    api_key="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",
+    api_key="ANTHROPIC_KEY",
 )
 
 
 #OpenAI key
-openai.api_key = "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" 
+openai.api_key = "OPENAI_KEY" 
 
 
 def create_chatbot_chatgpt(query, model, base64_image, T=0.7):
@@ -27,7 +27,7 @@ def create_chatbot_chatgpt(query, model, base64_image, T=0.7):
         o1-preview-2024-09-12	
         gpt-4o-mini
     """
-    client = openai.OpenAI(api_key="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")
+    client = openai.OpenAI(api_key="OPENAI_KEY")
  
     chatbot = client.chat.completions.create(
         messages=[
