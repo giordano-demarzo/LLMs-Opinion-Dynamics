@@ -206,9 +206,9 @@ second_plot_dir = 'data_SI/transition_prob_majority_gpt4_kz'
 gpt_4_dir = 'data_SI/various_N_GPT-4 Turbo'
 fig = plt.figure(figsize=(18, 8))
 plt.rcParams.update({'font.size': 20})
-gs = GridSpec(1, 2) 
+gs = GridSpec(1, 1) 
 ax1 = fig.add_subplot(gs[0, 0])
-ax2 = fig.add_subplot(gs[0, 1])
+#ax2 = fig.add_subplot(gs[0, 1])
 
 
 # Data provided by the user
@@ -244,7 +244,7 @@ markers = ['o', 's', 'D', '^', 'v', '<', '>', 'P', '*', '+']
 
 # Plotting the data
 for i in range(len(labels)):
-    ax1.scatter(x[i], y[i], label=labels[i], marker=markers[i], s=100)
+    ax1.scatter(x[i], y[i], label=labels[i], marker=markers[i], s=200)
 
 # Adding the linear regression line with confidence interval
 sns.regplot(x=x, y=y, ax=ax1, ci=95, scatter=False, color='tab:orange', line_kws={"lw": 2})
@@ -298,63 +298,155 @@ def plot_data_second(ax, directory):
         y_fit = tanh_fit(x_fit, beta)
 
         # Plot the original data
-        ax.scatter(x, y, label=fr'$N={size}$', color=color[i], marker=marker[i], s=100)
+        ax.scatter(x, y, label=fr'$N={size}$', color=color[i], marker=marker[i], s=500)
 
         # Plot the fit line
         ax.plot(x_fit, y_fit, color=color[i])
 
-# Plot the data for the second subplot
-plot_data_second(ax2, second_plot_dir)
-ax2.set_xlabel(r'Collective opinion $m$')
-ax2.set_ylabel(r'Adoption probability $P(m)$')
-ax2.set_ylim([-0.1, 1.1])
-ax2.legend()
+# # Plot the data for the second subplot
+# plot_data_second(ax2, second_plot_dir)
+# ax2.set_xlabel(r'Collective opinion $m$')
+# ax2.set_ylabel(r'Adoption probability $P(m)$')
+# ax2.set_ylim([-0.1, 1.1])
+# ax2.legend()
 
 
-# Function to process each directory and fit the tanh function
-def process_directory(directory):
-    allowed_N_values = {30, 50, 100, 200, 500}
-    files_info = []
-    for filename in os.listdir(directory):
-        if filename.endswith('.txt'):
-            full_path = os.path.join(directory, filename)
-            data = pd.read_csv(full_path, header=None)
-            # Extract x and y data
-            x = data.iloc[:, 0].values
-            y = data.iloc[:, -1].values
-            # Fit the data to the tanh function
-            popt, pcov = curve_fit(tanh_fit, x, y)
-            beta = popt[0]
-            beta_err = np.sqrt(np.diag(pcov))[0]  # Extract the standard deviation (error) for beta
-            # Extract N from filename
-            N = int(filename.split('_')[2])
-            # print(filename, N, beta, beta_err)
+# # Function to process each directory and fit the tanh function
+# def process_directory(directory):
+#     allowed_N_values = {30, 50, 100, 200, 500}
+#     files_info = []
+#     for filename in os.listdir(directory):
+#         if filename.endswith('.txt'):
+#             full_path = os.path.join(directory, filename)
+#             data = pd.read_csv(full_path, header=None)
+#             # Extract x and y data
+#             x = data.iloc[:, 0].values
+#             y = data.iloc[:, -1].values
+#             # Fit the data to the tanh function
+#             popt, pcov = curve_fit(tanh_fit, x, y)
+#             beta = popt[0]
+#             beta_err = np.sqrt(np.diag(pcov))[0]  # Extract the standard deviation (error) for beta
+#             # Extract N from filename
+#             N = int(filename.split('_')[2])
+#             # print(filename, N, beta, beta_err)
 
-            # Only include allowed N values
-            if N in allowed_N_values:
-                files_info.append((N, beta, beta_err))
+#             # Only include allowed N values
+#             if N in allowed_N_values:
+#                 files_info.append((N, beta, beta_err))
     
-    # Sort files by N
-    files_info.sort(key=lambda x: x[0])
+#     # Sort files by N
+#     files_info.sort(key=lambda x: x[0])
     
-    return files_info
+#     return files_info
 
-results = {}
-for directory in [second_plot_dir, gpt_4_dir]:
-    results[directory] = process_directory(directory)
+# results = {}
+# for directory in [second_plot_dir, gpt_4_dir]:
+#     results[directory] = process_directory(directory)
 
-ax3 = ax2.inset_axes([0.6, 0.15, 0.35, 0.35])
+# ax3 = ax2.inset_axes([0.6, 0.15, 0.35, 0.35])
 
-# Plotting the second row
-for idx, (model, data) in enumerate(results.items()):
-    N_values, beta_values, beta_errors = zip(*data)
-    model_name = model.split('_')[-1]
-    ax3.errorbar(N_values, beta_values, yerr=beta_errors, fmt=marker[idx], color=color[idx], capsize=5, label=model_name, linestyle='-', lw=2, markersize='10')
+# # Plotting the second row
+# for idx, (model, data) in enumerate(results.items()):
+#     N_values, beta_values, beta_errors = zip(*data)
+#     model_name = model.split('_')[-1]
+#     ax3.errorbar(N_values, beta_values, yerr=beta_errors, fmt=marker[idx], color=color[idx], capsize=5, label=model_name, linestyle='-', lw=2, markersize='10')
 
-ax3.set_xscale('log')
-ax3.set_xlabel(r'$N$')
-ax3.set_ylabel(r'$\beta$')
-ax3.set_xlim([20, 1000])
+# ax3.set_xscale('log')
+# ax3.set_xlabel(r'$N$')
+# ax3.set_ylabel(r'$\beta$')
+# ax3.set_xlim([20, 1000])
 
 plt.savefig('plot3_SI.png', dpi=300, bbox_inches='tight', transparent=False)
+plt.show()
+
+#%%
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
+
+# Data
+data = [
+    ("Claude 3.5 Sonnet", 88.7, 65, 92.0, 71.1, 91.6, 1283, 1000),  
+    ("GPT-4o", 87.2, 49.9, 91, 76.6, 89.9, 1285, 80),
+    #("Claude 3 Opus", 86.8, 50.4, 84.9, 60.1, 90.7, 1247, 8.6),
+    ("GPT-4 Turbo", 85.4, 41.4, 86.6, 64.5, 85.1, 1245, 1000),
+    ("GPT-4", 82.7, -1, 66.4, -1, -1, 1163, 600),
+    ("Llama 3 70B", 82, 39.5, 81.7, 50.4, -1, 1206, 30),
+    ("Claude 3 Sonnet", 79.0, 40.4, 73, 43.1, 83.5, 1201, 80),
+    ("Claude 2.0", 78.5, -1, 71.2, -1, -1, -1, 15),
+    ("Claude 3 Haiku", 75.2, 33.3, 75.9, 38.9, 75.1, 1179, 10),
+    ("GPT-3.5 Turbo", 70, -1, -1, -1, -1, 1106, 2)
+]
+
+columns = ["Model", "MMLU", "GPQA", "HumanEval", "Math", "MGSM", "ELO", "Beta"]
+df = pd.DataFrame(data, columns=columns)
+
+# Plot style
+plt.rcParams.update({
+    "font.size": 12,
+    "axes.labelsize": 14,
+    "axes.titlesize": 14,
+    "legend.fontsize": 11,
+    "xtick.labelsize": 11,
+    "ytick.labelsize": 11,
+    "figure.titlesize": 16
+})
+
+# Benchmarks and visual setup
+benchmarks = ["MMLU", "GPQA", "HumanEval", "Math", "MGSM", "ELO"]
+benchmark_titles = {
+    "MMLU": "MMLU",
+    "GPQA": "GPQA",
+    "HumanEval": "HumanEval",
+    "Math": "Math",
+    "MGSM": "MGSM",
+    "ELO": "ELO Score"
+}
+
+colors = list(mcolors.TABLEAU_COLORS.values())
+model_order = [
+    "Claude 3.5 Sonnet", "GPT-4o", "Claude 3 Opus", "GPT-4 Turbo",
+    "GPT-4", "Llama 3 70B", "Claude 3 Sonnet", "Claude 2.0",
+    "Claude 3 Haiku", "GPT-3.5 Turbo"
+]
+markers = ['o', 's', 'D', '>', 'v', 'p', '*', 'h', '+', 'x']
+color_marker_map = dict(zip(model_order, zip(colors, markers)))
+
+# Plot
+fig = plt.figure(figsize=(16, 8))
+axes = GridSpec(3, 3, height_ratios=[3, 3, 0.2], hspace=0.3)
+axes = [axes[i, j] for i in range(3) for j in range(3)]
+
+
+for i, benchmark in enumerate(benchmarks):
+    ax = fig.add_subplot(axes[i])
+    valid = df[df[benchmark] != -1]
+    for _, row in valid.iterrows():
+        model = row["Model"]
+        color, marker = color_marker_map[model]
+        ax.plot(row[benchmark], row["Beta"], marker=marker, color=color,
+                linestyle='None', markersize=8, label=model)
+    ax.set_xlabel(benchmark_titles[benchmark])
+    ax.set_ylabel("Critical group size $N_c$")
+    #ax.set_ylim(-1, 10)
+    #ax.set_title(f"{benchmark_titles[benchmark]} vs Beta")
+    ax.set_yscale('log')
+
+# Remove unused bottom-right plots
+#for j in range(6, 9):
+#    axes[j].axis("off")
+
+# Legend
+handles = [
+    plt.Line2D([0], [0], marker=marker, color='w', label=model,
+               markerfacecolor=color, markersize=10)
+    for model, (color, marker) in color_marker_map.items()
+]
+fig.legend(handles=handles, loc='lower center', bbox_to_anchor=(0.5, 0.02),
+           ncol=5, fontsize=12)
+
+# Save and show
+plt.tight_layout()
+plt.savefig("plot4_SI.png", dpi=300)
 plt.show()
