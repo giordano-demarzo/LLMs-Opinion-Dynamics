@@ -8,12 +8,12 @@ import string
 
 #Anthropic key
 client = anthropic.Anthropic(
-    api_key="ANTHROPIC_KEY",
+    api_key="your_APi_key",
 )
 
 
 #OpenAI key
-openai.api_key = "OPENAI_KEY" 
+openai.api_key = "your_APi_key" 
 
 
 def create_chatbot_chatgpt(query, model, base64_image, T=0.7):
@@ -27,7 +27,7 @@ def create_chatbot_chatgpt(query, model, base64_image, T=0.7):
         o1-preview-2024-09-12	
         gpt-4o-mini
     """
-    client = openai.OpenAI(api_key="OPENAI_KEY")
+    client = openai.OpenAI(api_key="your_APi_key")
  
     chatbot = client.chat.completions.create(
         messages=[
